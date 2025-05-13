@@ -120,11 +120,7 @@ export class Game extends Scene {
     };
     this.objects = [];
     this.iconsArray = [];
-    this.icons = [
-      { name: "ammo", weight: 79, isSensor: true },
-      { name: "healthPack", weight: 20, isSensor: true },
-      { name: "gift_box", weight: 1, isSensor: true },
-    ];
+    this.icons = [{ name: "healthPack", weight: 20, isSensor: true }];
     this.lastChangeArea = 0;
     this.diastanceToChangeArea = 50;
     this.droneAmt = 1;

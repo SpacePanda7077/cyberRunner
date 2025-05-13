@@ -8,7 +8,6 @@ export class Boot extends Scene {
   }
 
   preload() {
-    this.getPlayerNFT();
     //  The Boot Scene is typically used to load in any assets you require for your Preloader, such as a game logo or background.
     //  The smaller the file size of the assets, the better, as the Boot Scene itself has no preloader.
     this.load.image(
@@ -70,6 +69,40 @@ export class Boot extends Scene {
     );
     this.load.audio("gameSound", "assets/sounds/gameSound.mp3");
     this.load.audio("jumpSound", "assets/sounds/jumpSound.wav");
+
+    this.add
+      .text(
+        this.cameras.main.worldView.x + this.cameras.main.width / 2,
+        this.cameras.main.worldView.y + this.cameras.main.height / 2,
+        "TAP ONCE TO JUMP"
+      )
+      .setScale(3)
+      .setOrigin(0.5, 0.5);
+
+    this.add
+      .text(
+        this.cameras.main.worldView.x + this.cameras.main.width / 2,
+        this.cameras.main.worldView.y + this.cameras.main.height / 2 + 80,
+        "TAP TWICE TO DOUBLE JUMP"
+      )
+      .setScale(3)
+      .setOrigin(0.5, 0.5);
+    this.add
+      .text(
+        this.cameras.main.worldView.x + this.cameras.main.width / 2,
+        this.cameras.main.worldView.y + this.cameras.main.height / 2 + 160,
+        "ONCE YOU SEE YELLOW RECTANGLE "
+      )
+      .setScale(2)
+      .setOrigin(0.5, 0.5);
+    this.add
+      .text(
+        this.cameras.main.worldView.x + this.cameras.main.width / 2,
+        this.cameras.main.worldView.y + this.cameras.main.height / 2 + 190,
+        " KEEP TAPPING YOU SCREEN TO GO UP "
+      )
+      .setScale(2)
+      .setOrigin(0.5, 0.5);
   }
 
   create() {
@@ -120,9 +153,5 @@ export class Boot extends Scene {
         });
       }
     });
-  }
-  async getPlayerNFT() {
-    this.nfts = await getPlayerNfts(this);
-    console.log(this.nfts);
   }
 }

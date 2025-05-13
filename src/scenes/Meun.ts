@@ -80,10 +80,6 @@ export class MenuScene extends Scene {
       this.cameras.main.worldView.x + this.cameras.main.width / 2,
       this.cameras.main.worldView.y + this.cameras.main.height / 2
     );
-    myNFTs.forEach((nft: any) => {
-      const character = this.add.image(0, -180, nft.imageName).setScale(3);
-      this.menuCont.add(character);
-    });
     //this.character = this.add.image(0, -180, "yellow_shirt_guy").setScale(3);
 
     // buttons .........................................//
@@ -99,15 +95,7 @@ export class MenuScene extends Scene {
       .setScale(2)
       .setOrigin(0.5, 0.5)
       .setInteractive();
-    this.rightBtn = this.add
-      .sprite(180, -180, "arrowBtn")
-      .setScale(2)
-      .setInteractive();
-    this.lefttBtn = this.add
-      .sprite(-180, -180, "arrowBtn")
-      .setScale(2)
-      .setInteractive();
-    this.lefttBtn.flipX = true;
+
     this.playBtn = this.add
       .sprite(0, 0, "buttons", 1)
       .setScale(2)
@@ -116,23 +104,8 @@ export class MenuScene extends Scene {
       .sprite(0, 80, "buttons", 0)
       .setScale(2)
       .setInteractive();
-    this.lootsBtn = this.add
-      .sprite(0, 160, "buttons", 4)
-      .setScale(2)
-      .setInteractive();
-    this.marketBtn = this.add
-      .sprite(0, 240, "buttons", 5)
-      .setScale(2)
-      .setInteractive();
 
-    this.menuCont.add([
-      this.playBtn,
-      this.leaderBoardBtn,
-      this.lootsBtn,
-      this.marketBtn,
-      this.rightBtn,
-      this.lefttBtn,
-    ]);
+    this.menuCont.add([this.playBtn, this.leaderBoardBtn]);
     this.connectCont.add([this.connectBtn]);
     this.leaderBoardCont.add([this.backBtn]);
     this.clickButtons();
