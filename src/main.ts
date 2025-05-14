@@ -7,6 +7,7 @@ import { AUTO, Game, Scale, Types } from "phaser";
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
+
 const config: Types.Core.GameConfig = {
   type: Phaser.WEBGL,
   width: 720,
@@ -30,3 +31,4 @@ const config: Types.Core.GameConfig = {
 };
 
 export default new Game(config);
+

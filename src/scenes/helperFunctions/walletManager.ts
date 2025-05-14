@@ -133,7 +133,7 @@ export async function createLeaderBoard() {
     console.log(err);
   }
 }
-export async function getPlayerNfts(scene: Phaser.Scene) {
+export async function getPlayerNfts(nftArray:any[]) {
   const metamaskprovider: any = MMSDK.getProvider();
   const provider = new ethers.BrowserProvider(metamaskprovider);
   const network = await provider.getNetwork();
@@ -144,11 +144,11 @@ export async function getPlayerNfts(scene: Phaser.Scene) {
     signer
   );
   const nfts = await contract.getPlayersTokenIDs();
-  await getNftImages(nfts, contract, scene);
+  await getNftImages(nfts, contract, nftArray);
 
   return nfts;
 }
-async function getNftImages(nft: any, contract: any, scene: Phaser.Scene) {
+async function getNftImages(nft: any, contract: any, nftArray: any[]) {
   nft.forEach(async (nft: any) => {
     const nftURI = await contract.tokenURI(nft);
     const result = await fetch(nftURI).then(async (res) => {
@@ -156,7 +156,7 @@ async function getNftImages(nft: any, contract: any, scene: Phaser.Scene) {
       const nftImage = data.image;
       const nftSprite = data.characterSprite;
       const spriteName = data.characterName;
-      myNFTs.push({
+      nftArray.push({
         imageName: `${spriteName}_nft`,
         image: nftImage,
         spriteName,
@@ -166,4 +166,18 @@ async function getNftImages(nft: any, contract: any, scene: Phaser.Scene) {
     });
   });
   console.log(myNFTs);
+}
+
+export async function Mint(tokenUri:string, id: number) {
+  const metamaskprovider: any = MMSDK.getProvider();
+  const provider = new ethers.BrowserProvider(metamaskprovider);
+  const signer = await provider.getSigner();
+  const contract = new ethers.Contract(
+    cyberNft_address,
+    cyberNftabi.abi,
+    signer
+  );
+  const conv_id = ethers.parseEther(id.toString())
+  const mint = await contract.mint(tokenUri, conv_id);
+  console.log(mint)
 }

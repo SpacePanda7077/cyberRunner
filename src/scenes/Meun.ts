@@ -4,7 +4,9 @@ import {
   Initialize_Wallet,
   connectWallet,
   createLeaderBoard,
+  getPlayerNfts,
   myNFTs,
+  Mint
 } from "./helperFunctions/walletManager";
 
 export class MenuScene extends Scene {
@@ -29,26 +31,33 @@ export class MenuScene extends Scene {
   lefttBtn: Phaser.GameObjects.Sprite;
   walletkit: any;
   connectCont: Phaser.GameObjects.Container;
+  marketCont: Phaser.GameObjects.Container;
   sortedLeaderBoard: any;
   leaderBoardCont: Phaser.GameObjects.Container;
   backBtn: Phaser.GameObjects.Text;
   containArray: { name: Phaser.GameObjects.Container; active: boolean }[];
   nfts: any;
   dontHaveNFT: boolean;
-  mintYourFisrtNFTBtn: Phaser.GameObjects.Text;
+  mintYourFirstNFTBtn: Phaser.GameObjects.Text;
+  hasNft: boolean;
+  nftArray: any[]
   constructor() {
     super("Menu");
   }
 
-  async preload() {
+  preload() {
+    this.nftArray = []
+    this.getPlayersNfts()
+    this.initializeWallet()
     myNFTs.forEach((nft: any) => {
       this.load.image(nft.imageName, nft.image);
       this.load.image(nft.spriteName, nft.spriteImage);
     });
-    this.walletkit = await Initialize_Wallet();
+    
   }
 
   async create() {
+    this.hasNft = false
     this.width = Number(this.game.config.width);
     this.height = Number(this.game.config.height);
 
@@ -76,7 +85,13 @@ export class MenuScene extends Scene {
       this.cameras.main.worldView.x + this.cameras.main.width / 2,
       this.cameras.main.worldView.y + this.cameras.main.height / 2
     );
+    
     this.leaderBoardCont = this.add.container(
+      this.cameras.main.worldView.x + this.cameras.main.width / 2,
+      this.cameras.main.worldView.y + this.cameras.main.height / 2
+    );
+
+    this.marketCont = this.add.container(
       this.cameras.main.worldView.x + this.cameras.main.width / 2,
       this.cameras.main.worldView.y + this.cameras.main.height / 2
     );
@@ -90,6 +105,12 @@ export class MenuScene extends Scene {
       .setOrigin(0.5, 0.5)
       .setInteractive();
 
+    this.mintYourFirstNFTBtn = this.add
+      .text(this.cameras.main.worldView.x + this.cameras.main.width / 2,this.cameras.main.worldView.y + this.cameras.main.height / 2, "click to mint your first nft")
+      .setScale(2)
+      .setOrigin(0.5, 0.5)
+      .setInteractive()
+    .setVisible(false).setActive(false)
     this.connectBtn = this.add
       .text(150, -500, "connect wallet")
       .setScale(2)
@@ -104,8 +125,12 @@ export class MenuScene extends Scene {
       .sprite(0, 80, "buttons", 0)
       .setScale(2)
       .setInteractive();
+    this.marketBtn = this.add
+      .sprite(0, 160, "buttons", 5)
+      .setScale(2)
+      .setInteractive();
 
-    this.menuCont.add([this.playBtn, this.leaderBoardBtn]);
+    this.menuCont.add([this.playBtn, this.leaderBoardBtn, this.marketBtn]);
     this.connectCont.add([this.connectBtn]);
     this.leaderBoardCont.add([this.backBtn]);
     this.clickButtons();
@@ -125,6 +150,7 @@ export class MenuScene extends Scene {
     this.bgArray.forEach((bg, index) => {
       this.bgArray[index].tilePositionX += this.bgSpeedArray[index];
     });
+    this.checkForNft()
     if (walletAddress === undefined) {
       this.menuCont.setActive(false).setVisible(false);
     } else {
@@ -167,6 +193,13 @@ export class MenuScene extends Scene {
     this.backBtn.on("pointerdown", () => {
       this.changeContainer(this.menuCont);
     });
+
+    this.mintYourFirstNFTBtn.on("pointerdown",()=>{
+      const tokenURI = "https://plum-total-louse-876.mypinata.cloud/ipfs/bafkreidq7jn2p33u6hkfk2jgnozbnpate7h4zi2rfpbprq46heljdo6ncu"
+      const id = 1
+      this.mint(tokenURI, id)
+      
+    })
   }
   shortedAddresses(wallet: any) {
     const walladdr = `${wallet.slice(0, 5)}.... ${wallet.slice(-5)}`;
@@ -198,7 +231,20 @@ export class MenuScene extends Scene {
       } else {
         container.name.setActive(true).setVisible(true);
       }
-    });
+    })
+    if(!this.hasNft){
+      this.containArray.forEach((container:any) =>{
+        container.active = false
+        this.mintYourFirstNFTBtn.setActive(true).setVisible(true)
+      })
+    }else{
+      this.containArray.forEach(container =>{
+        if(container.name === this.menuCont){
+          container.active = true
+        }
+      } )
+      this.mintYourFirstNFTBtn.setActive(false).setVisible(false)
+    }
   }
 
   changeContainer(containerName: Phaser.GameObjects.Container) {
@@ -209,5 +255,31 @@ export class MenuScene extends Scene {
         container.active = false;
       }
     });
+  }
+
+  checkForNft(){
+    if(this.nftArray.length <= 0){
+      this.hasNft = false
+    }else{
+      this.hasNft = true
+    }
+  }
+  async connectWallet(){
+    await connectWallet()
+  }
+  async initializeWallet(){
+    await Initialize_Wallet()
+  }
+  async getPlayersNfts(){
+    await getPlayerNfts(this.nftArray)
+    console.log(this.nftArray)
+  }
+
+  async mint(tokenURI: string, id:number){
+    console.log("minting")
+    const mint = await Mint(tokenURI, id)
+  }
+  loadNftsImages(){
+    
   }
 }
