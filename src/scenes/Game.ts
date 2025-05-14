@@ -55,6 +55,7 @@ export class Game extends Scene {
   groundEnemySpawnProbs: number;
   lastScore: any;
   convLastScore: number;
+  startRotating: boolean
 
   constructor() {
     super("Game");
@@ -97,6 +98,7 @@ export class Game extends Scene {
     this.floorSpawnX = 500;
     this.floorArry = [];
     this.obsSpawnChance = 0.7;
+    this.startRotating = false;
     this.air_obstacles = [
       { name: "air_drone", weight: 70, isSensor: true },
       { name: "air_mystery_box", weight: 30, isSensor: true },
@@ -220,6 +222,7 @@ export class Game extends Scene {
         this.electricAmt = 3
       }else if (distance > 400) {
         this.electricAmt = 2
+        this.startRotating = true
       }
       if (distance > 100) {
         this.addElectric = true;
@@ -278,18 +281,9 @@ export class Game extends Scene {
       if (this.shootBtn?.isDown) {
         this.player.spawnBullet(this, time);
       }
-      // moving bullets ...........................................//
 
-      this.player.bulletArray.forEach((bullet) => {
-        if (bullet) {
-          bullet.setVelocityX(15);
-          // if (bullet.x > this.cameras.main.scrollX) {
-          //   bullet.destroy();
-          //   const index = this.player.bulletArray.findIndex((b) => b === bullet);
-          //   delete this.player.bulletArray[index];
-          // }
-        }
-      });
+
+      
       const velocity: any = this.player.player.body?.velocity;
       this.player.player.setVelocityX(this.player.speed);
       if (this.player.isOnFloor) {
@@ -322,7 +316,7 @@ export class Game extends Scene {
       }
       // //this.addFloor();
       this.floorArry.forEach((floor) => {
-        if (floor.x + floor.width / 2 < this.cameras.main.scrollX) {
+        if (floor.x + floor.width / 2 < this.cameras.main.worldView.x) {
           this.addPlatform();
           floor.destroy();
           const index = this.floorArry.findIndex((f) => f === floor);
@@ -359,6 +353,9 @@ export class Game extends Scene {
               const x = obj.x - 4;
               obj.setPosition(x, obj.y);
             }
+          }
+          if(obj.getData("label") === "electric_bar" && this.startRotating){
+            obj.rotation += 0.01
           }
         }
       });
@@ -428,7 +425,7 @@ export class Game extends Scene {
 
           const random = this.weightedRandom(this.icons);
           this.objects.forEach((obj) => {
-            if (obj.x === bodyB.position.x) {
+            if (obj.x === bodyB.position.x && obj.y === bodyB.position.y) {
               const icon = new Icons(
                 this,
                 obj.x,
@@ -522,7 +519,7 @@ export class Game extends Scene {
         "electric_bar",
         0,
         { isStatic: true, isSensor: true, label: "electric_bar" }
-      );
+      ).setData("label", "electric_bar")
       electricBar.rotation = rotation;
       electricBar.play("shock");
       this.objects.push(electricBar);
