@@ -216,11 +216,10 @@ export class Game extends Scene {
         console.log(this.area);
         this.lastChangeArea = distance;
       }
-      if (distance > this.lastElectricSpwnTime + this.diastanceToAddElectric) {
-        if (this.electricAmt < 3) {
-          this.electricAmt++;
-        }
-        this.lastElectricSpwnTime = distance;
+      if (distance > 800) {
+        this.electricAmt = 3
+      }else if (distance > 400) {
+        this.electricAmt = 2
       }
       if (distance > 100) {
         this.addElectric = true;

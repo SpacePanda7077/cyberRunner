@@ -140,6 +140,7 @@ export class MenuScene extends Scene {
     this.containArray = [
       { name: this.menuCont, active: true },
       { name: this.leaderBoardCont, active: false },
+      { name: this.marketCont, active: false }
     ];
     // connectWallet(this.walletkit);
     this.sortedLeaderBoard = await createLeaderBoard();
@@ -193,6 +194,12 @@ export class MenuScene extends Scene {
     this.backBtn.on("pointerdown", () => {
       this.changeContainer(this.menuCont);
     });
+
+this.marketBtn.on("pointerdown", () => {
+      alert("it will take you to an nft market place like opensea when available")
+    });
+
+    
 
     this.mintYourFirstNFTBtn.on("pointerdown",()=>{
       const tokenURI = "https://plum-total-louse-876.mypinata.cloud/ipfs/bafkreidq7jn2p33u6hkfk2jgnozbnpate7h4zi2rfpbprq46heljdo6ncu"
@@ -282,4 +289,6 @@ export class MenuScene extends Scene {
   loadNftsImages(){
     
   }
+
+  
 }

@@ -61,11 +61,14 @@ export class GameOver extends Scene {
       .sprite(0, 80, "buttons", 3)
       .setScale(2)
       .setInteractive();
-
+this.highscoreText = this.add.text(this.cameras.main.worldView.x + this.cameras.main.width / 2, this.cameras.main.worldView.y + this.cameras.main.height / 2, "New highScore, comfirm TX to save").setScale(2).setOrigin(0.5, 0.5).setVisible(false).setActive(false)
     this.menuCont.add([this.restartBtn, this.menuBtn, this.highScore]);
     this.clickButtons();
-    if (this.distance > this.lastScore) {
-      setHighscrore(this.distance);
+    if (this.distance > this.lastScore)
+    {
+      this.highscoreText.setVisible(true).setActive(true)
+      this.menuCont.setVisible(false).setActive(false);
+this.setHighscrore(this.distance);
     }
   }
 
@@ -91,5 +94,14 @@ export class GameOver extends Scene {
     this.menuBtn.on("pointerdown", () => {
       this.scene.start("Menu");
     });
+  }
+  async setHighScore(highScore: number){
+    await setHighscrore(highScore).then((res) => {
+      console.log(res);
+      if(this.menuCont.active === false){
+        this.menuCont.setVisible(true).setActive(true);
+        this.highscoreText.setVisible(false).setActive(false)
+      }
+    })
   }
 }
