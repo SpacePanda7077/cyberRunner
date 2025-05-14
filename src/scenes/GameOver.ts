@@ -1,24 +1,34 @@
 import { Scene } from "phaser";
 import { setHighscrore } from "./helperFunctions/walletManager";
 
+/**
+ * GameOver Scene - Handles the game over state and high score submission
+ * Displays final score and provides options to restart or return to menu
+ */
 export class GameOver extends Scene {
-  bgList: string[];
-  width: number;
-  height: number;
-  bgArray: Phaser.GameObjects.TileSprite[];
-  bgSpeedArray: number[];
-  menuCont: Phaser.GameObjects.Container;
-  deathCont: Phaser.GameObjects.Container;
-  playBtn: Phaser.GameObjects.Text;
-  gameOverBtn: Phaser.GameObjects.Text;
-  restartBtn: Phaser.GameObjects.Sprite;
-  menuBtn: Phaser.GameObjects.Sprite;
-  distance: number;
-  highScore: Phaser.GameObjects.Text;
-  lastScore: any;
+  // Scene properties
+  bgList: string[];                    // List of background layer images
+  width: number;                       // Scene width
+  height: number;                      // Scene height
+  bgArray: Phaser.GameObjects.TileSprite[]; // Background layers
+  bgSpeedArray: number[];             // Speed for each background layer
+  menuCont: Phaser.GameObjects.Container;   // Menu container
+  deathCont: Phaser.GameObjects.Container;  // Death screen container
+  playBtn: Phaser.GameObjects.Text;         // Play again button
+  gameOverBtn: Phaser.GameObjects.Text;     // Game over text
+  restartBtn: Phaser.GameObjects.Sprite;    // Restart button
+  menuBtn: Phaser.GameObjects.Sprite;       // Return to menu button
+  distance: number;                         // Final score/distance
+  highScore: Phaser.GameObjects.Text;       // High score display
+  lastScore: any;                          // Previous high score
+
   constructor() {
     super("GameOver");
   }
+
+  /**
+   * Initialize scene with final score data
+   */
   init(data: any) {
     this.distance = data.distance;
     this.lastScore = data.lastScore;
@@ -26,6 +36,9 @@ export class GameOver extends Scene {
 
   preload() {}
 
+  /**
+   * Create game over screen elements
+   */
   create() {
     this.width = Number(this.game.config.width);
     this.height = Number(this.game.config.height);
@@ -61,22 +74,29 @@ export class GameOver extends Scene {
       .sprite(0, 80, "buttons", 3)
       .setScale(2)
       .setInteractive();
-this.highscoreText = this.add.text(this.cameras.main.worldView.x + this.cameras.main.width / 2, this.cameras.main.worldView.y + this.cameras.main.height / 2, "New highScore, comfirm TX to save").setScale(2).setOrigin(0.5, 0.5).setVisible(false).setActive(false)
+    this.highscoreText = this.add.text(this.cameras.main.worldView.x + this.cameras.main.width / 2, this.cameras.main.worldView.y + this.cameras.main.height / 2, "New highScore, comfirm TX to save").setScale(2).setOrigin(0.5, 0.5).setVisible(false).setActive(false)
     this.menuCont.add([this.restartBtn, this.menuBtn, this.highScore]);
     this.clickButtons();
     if (this.distance > this.lastScore)
     {
       this.highscoreText.setVisible(true).setActive(true)
       this.menuCont.setVisible(false).setActive(false);
-this.setHighscrore(this.distance);
+      this.setHighscrore(this.distance);
     }
   }
 
+  /**
+   * Update loop for background animations
+   */
   update(time: number, delta: number): void {
     this.bgArray.forEach((bg, index) => {
       this.bgArray[index].tilePositionX += this.bgSpeedArray[index];
     });
   }
+
+  /**
+   * Creates parallax background effect
+   */
   createParalaxBg() {
     for (var i = 0; i < this.bgList.length - 1; i++) {
       const bg = this.add
@@ -87,6 +107,10 @@ this.setHighscrore(this.distance);
       this.bgArray.push(bg);
     }
   }
+
+  /**
+   * Sets up button click handlers
+   */
   clickButtons() {
     this.restartBtn.on("pointerdown", () => {
       this.scene.start("Game");
@@ -95,6 +119,10 @@ this.setHighscrore(this.distance);
       this.scene.start("Menu");
     });
   }
+
+  /**
+   * Submits new high score to blockchain
+   */
   async setHighScore(highScore: number){
     await setHighscrore(highScore).then((res) => {
       console.log(res);

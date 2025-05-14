@@ -3,23 +3,35 @@ import { Player } from "./classes/player";
 import { getPlayerScore } from "./helperFunctions/walletManager";
 import { Icons } from "./classes/icon";
 
+/**
+ * Main Game Scene - Handles core gameplay mechanics
+ * Including player movement, obstacle generation, and score tracking
+ */
 export class Game extends Scene {
-  player: Player;
-  bull: Phaser.Physics.Matter.Sprite;
-  bullet: Phaser.GameObjects.Rectangle[];
-  isOnFloor: boolean;
-  isOnWall: boolean;
-  width: number;
-  height: number;
-  firstBg: Phaser.GameObjects.TileSprite;
-  bgList: string[];
-  bgArray: Phaser.GameObjects.TileSprite[];
-  bgSpeedArray: number[];
+  // Core game objects
+  player: Player;                      // Player character
+  bull: Phaser.Physics.Matter.Sprite;  // Bull obstacle
+  bullet: Phaser.GameObjects.Rectangle[]; // Bullet projectiles
 
-  camSpeed: number;
-  camFollow: Phaser.Physics.Matter.Sprite;
-  enemies: Phaser.Physics.Matter.Sprite[];
-  lastEnemySpwnTime: number;
+  // Player states
+  isOnFloor: boolean;                  // Ground collision state
+  isOnWall: boolean;                   // Wall collision state
+
+  // Scene dimensions
+  width: number;                       // Scene width
+  height: number;                      // Scene height
+
+  // Background elements
+  firstBg: Phaser.GameObjects.TileSprite;
+  bgList: string[];                    // Background layer images
+  bgArray: Phaser.GameObjects.TileSprite[]; // Background sprites
+  bgSpeedArray: number[];             // Layer movement speeds
+
+  // Game mechanics
+  camSpeed: number;                    // Camera movement speed
+  camFollow: Phaser.Physics.Matter.Sprite; // Camera target
+  enemies: Phaser.Physics.Matter.Sprite[]; // Enemy objects
+  lastEnemySpwnTime: number;          // Enemy spawn timer
   delay: number;
   spawnEnemy: boolean;
   electric_bar_spawn: boolean;
@@ -61,12 +73,18 @@ export class Game extends Scene {
     super("Game");
   }
 
+  /**
+   * Preload game assets and player score
+   */
   async preload() {
     this.lastScore = await getPlayerScore();
     this.convLastScore = Math.floor(this.lastScore);
     console.log(this.convLastScore);
   }
 
+  /**
+   * Create and initialize game objects and mechanics
+   */
   create() {
     this.width = Number(this.game.config.width);
     this.height = Number(this.game.config.height);
@@ -190,8 +208,9 @@ export class Game extends Scene {
     );
   }
 
-  // Update loop ...............................................///
-
+  /**
+   * Main game loop - handles updates for all game objects
+   */
   update(time: number, delta: number): void {
     const d = Phaser.Math.Distance.Between(
       300,
@@ -283,7 +302,6 @@ export class Game extends Scene {
       }
 
 
-      
       const velocity: any = this.player.player.body?.velocity;
       this.player.player.setVelocityX(this.player.speed);
       if (this.player.isOnFloor) {

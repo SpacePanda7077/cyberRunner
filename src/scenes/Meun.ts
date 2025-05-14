@@ -9,53 +9,65 @@ import {
   Mint
 } from "./helperFunctions/walletManager";
 
+/**
+ * MenuScene class - Handles the main menu interface of the game
+ * Manages wallet connection, NFT display, and menu navigation
+ */
 export class MenuScene extends Scene {
-  bgList: string[];
-  width: number;
-  height: number;
-  bgArray: Phaser.GameObjects.TileSprite[];
-  bgSpeedArray: number[];
-  menuCont: Phaser.GameObjects.Container;
-  deathCont: Phaser.GameObjects.Container;
-  playBtn: Phaser.GameObjects.Sprite;
+  // Scene properties
+  bgList: string[];                    // List of background layer images
+  width: number;                       // Scene width
+  height: number;                      // Scene height
+  bgArray: Phaser.GameObjects.TileSprite[]; // Background layers
+  bgSpeedArray: number[];             // Speed for each background layer
+  menuCont: Phaser.GameObjects.Container;   // Main menu container
+  deathCont: Phaser.GameObjects.Container;  // Death screen container
+  playBtn: Phaser.GameObjects.Sprite;       // Play button
   theme:
     | Phaser.Sound.NoAudioSound
     | Phaser.Sound.HTML5AudioSound
     | Phaser.Sound.WebAudioSound;
-  connectBtn: Phaser.GameObjects.Text;
-  leaderBoardBtn: Phaser.GameObjects.Sprite;
-  lootsBtn: Phaser.GameObjects.Sprite;
-  marketBtn: Phaser.GameObjects.Sprite;
-  character: Phaser.GameObjects.Image;
-  rightBtn: Phaser.GameObjects.Sprite;
-  lefttBtn: Phaser.GameObjects.Sprite;
-  walletkit: any;
-  connectCont: Phaser.GameObjects.Container;
-  marketCont: Phaser.GameObjects.Container;
-  sortedLeaderBoard: any;
-  leaderBoardCont: Phaser.GameObjects.Container;
-  backBtn: Phaser.GameObjects.Text;
-  containArray: { name: Phaser.GameObjects.Container; active: boolean }[];
-  nfts: any;
-  dontHaveNFT: boolean;
-  mintYourFirstNFTBtn: Phaser.GameObjects.Text;
-  hasNft: boolean;
-  nftArray: any[]
+  connectBtn: Phaser.GameObjects.Text;      // Wallet connect button
+  leaderBoardBtn: Phaser.GameObjects.Sprite; // Leaderboard button
+  lootsBtn: Phaser.GameObjects.Sprite;      // Loots button
+  marketBtn: Phaser.GameObjects.Sprite;     // Marketplace button
+  character: Phaser.GameObjects.Image;      // Player character preview
+  rightBtn: Phaser.GameObjects.Sprite;      // Right navigation button
+  lefttBtn: Phaser.GameObjects.Sprite;      // Left navigation button
+  walletkit: any;                          // Wallet connection interface
+  connectCont: Phaser.GameObjects.Container; // Wallet connection container
+  marketCont: Phaser.GameObjects.Container;  // Marketplace container
+  sortedLeaderBoard: any;                   // Sorted leaderboard data
+  leaderBoardCont: Phaser.GameObjects.Container; // Leaderboard container
+  backBtn: Phaser.GameObjects.Text;         // Back navigation button
+  containArray: { name: Phaser.GameObjects.Container; active: boolean }[]; // Active containers
+  nfts: any;                               // Player's NFT collection
+  dontHaveNFT: boolean;                    // NFT ownership flag
+  mintYourFirstNFTBtn: Phaser.GameObjects.Text; // NFT minting button
+  hasNft: boolean;                         // NFT ownership status
+  nftArray: any[]                          // Array of owned NFTs
+
   constructor() {
     super("Menu");
   }
 
+  /**
+   * Preload assets and initialize wallet connection
+   */
   preload() {
     this.nftArray = []
     this.getPlayersNfts()
     this.initializeWallet()
+    // Load NFT images dynamically
     myNFTs.forEach((nft: any) => {
       this.load.image(nft.imageName, nft.image);
       this.load.image(nft.spriteName, nft.spriteImage);
     });
-    
   }
 
+  /**
+   * Create the menu scene and UI elements
+   */
   async create() {
     this.hasNft = false
     this.width = Number(this.game.config.width);
@@ -147,6 +159,9 @@ export class MenuScene extends Scene {
     this.createLeaderBoard(this.sortedLeaderBoard);
   }
 
+  /**
+   * Update loop for menu animations and state management
+   */
   update(time: number, delta: number): void {
     this.bgArray.forEach((bg, index) => {
       this.bgArray[index].tilePositionX += this.bgSpeedArray[index];
